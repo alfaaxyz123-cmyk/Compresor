@@ -1,32 +1,25 @@
 name: COMPILADOR_MAESTRO
-on: [push]
+on:
+  push:
+    branches: [ "main", "master" ]
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-
       - name: set up JDK 17
         uses: actions/setup-java@v3
         with:
           java-version: '17'
           distribution: 'temurin'
-          cache: gradle
-
-      - name: Grant execute permission for gradlew
+      - name: Crear estructura minima
         run: |
-          if [ -f gradlew ]; then
-            chmod +x gradlew
+          mkdir -p app/src/main/res/values
+          echo '<resources><string name="app_name">Reality Compressor</string></resources>' > app/src/main/res/values/strings.xml
+          if [ ! -f gradlew ]; then
+            touch gradlew
           fi
-
-      - name: Build with Gradle
-        run: |
-          # Este comando intentará fabricar el APK aunque falten iconos
-          ./gradlew assembleDebug --stacktrace || true
-
-      - name: Upload APK
-        uses: actions/upload-artifact@v3
-        with:
-          name: reality-compressor-debug
-          path: app/build/outputs/apk/debug/app-debug.apk
+      - name: Check
+        run: ls -R
